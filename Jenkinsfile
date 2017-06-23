@@ -18,6 +18,11 @@ pipeline {
             steps {
                 sh 'ant -f build.xml -v'
             }
+            post {
+                success {
+                    archiveArtifacts artifacts: 'dist/*.jar', fingerprint: true
+                }
+            }
         }
         stage('deploy') {
             agent {
@@ -35,12 +40,6 @@ pipeline {
                 sh "wget http://agoldin1.mylabserver.com/rectangles/all/rectangle_${env.BUILD_NUBER}.jar"
                 sh "java -jar rectangle_${env.BUILD_NUBER}.jar 3 4"
             }
-        }
-    }
-
-    post {
-        always {
-            archiveArtifacts artifacts: 'dist/*.jar', fingerprint: true
         }
     }
 }
