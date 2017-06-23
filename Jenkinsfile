@@ -6,6 +6,12 @@ pipeline {
     }
 
     stages {
+        stage('say hello') {
+            agent any
+            steps {
+                sayHello 'Awesome Student'
+            }
+        }
         stage('test') {
             agent {
                 label 'apache'
@@ -89,27 +95,28 @@ pipeline {
                 sh "git tag rectangle-${env.MAJOR_VERSION}.${env.BUILD_NUMBER}"
                 sh "git push origin rectangle-${env.MAJOR_VERSION}.${env.BUILD_NUMBER}"
             }
-            post {
-                success {
-                    emailext(
-                        subject: "${env.JOB_NAME} [Build #${env.BUILD_NUMBER}] Development Promoted to Master",
-                        body: """<p>${env.JOB_NAME} [Build #${env.BUILD_NUMBER}] Development Promoted to Master</p>
-                        <p>Check console output at <a href="${env.BUILD_URL}>${env.JOB_NAME} [Build #${env.BUILD_NUMBER}]</a></p>""",
-                        to: "agoldin@learnvest.com"
-                    )
-                }
-            }
+            // commented out because it isn't working
+//            post {
+//                success {
+//                    emailext(
+//                        subject: "${env.JOB_NAME} [Build #${env.BUILD_NUMBER}] Development Promoted to Master",
+//                        body: """<p>${env.JOB_NAME} [Build #${env.BUILD_NUMBER}] Development Promoted to Master</p>
+//                        <p>Check console output at <a href="${env.BUILD_URL}>${env.JOB_NAME} [Build #${env.BUILD_NUMBER}]</a></p>""",
+//                        to: "agoldin@learnvest.com"
+//                    )
+//                }
+//            }
         }
     }
-
-    post {
-        failure {
-            emailext(
-                subject: "${env.JOB_NAME} [Build #${env.BUILD_NUMBER}] Failed!",
-                body: """<p>${env.JOB_NAME} [Build #${env.BUILD_NUMBER}] Failed!</p>
-                <p>Check console output at <a href="${env.BUILD_URL}>${env.JOB_NAME} [Build #${env.BUILD_NUMBER}]</a></p>""",
-                to: "agoldin@learnvest.com"
-            )
-        }
-    }
+    // commented out because it isn't working
+//    post {
+//        failure {
+//            emailext(
+//                subject: "${env.JOB_NAME} [Build #${env.BUILD_NUMBER}] Failed!",
+//                body: """<p>${env.JOB_NAME} [Build #${env.BUILD_NUMBER}] Failed!</p>
+//                <p>Check console output at <a href="${env.BUILD_URL}>${env.JOB_NAME} [Build #${env.BUILD_NUMBER}]</a></p>""",
+//                to: "agoldin@learnvest.com"
+//            )
+//        }
+//    }
 }
