@@ -79,7 +79,7 @@ pipeline {
                 echo "Checking out development branch"
                 sh 'git checkout development'
                 echo "Checking out the master branch"
-                sh 'git pull'
+                sh 'git pull origin'
                 sh 'git checkout master'
                 echo "Merging development into master"
                 sh 'git merge development'
@@ -89,6 +89,27 @@ pipeline {
                 sh "git tag rectangle-${env.MAJOR_VERSION}.${env.BUILD_NUMBER}"
                 sh "git push origin rectangle-${env.MAJOR_VERSION}.${env.BUILD_NUMBER}"
             }
+            post {
+                success {
+                    emailext(
+                        subject: "${env.JOB_NAME} [Build #${env.BUILD_NUMBER}] Development Promoted to Master",
+                        body: """<p>${env.JOB_NAME} [Build #${env.BUILD_NUMBER}] Development Promoted to Master</p>
+                        <p>Check console output at &QUOT;<a href="${env.BUILD_URL}>${env.JOB_NAME} [Build #${env.BUILD_NUMBER}]</a>&QUOT;</p>""",
+                        to: "agoldin@learnvest.com"
+                    )
+                }
+            }
+        }
+    }
+
+    post {
+        failure {
+            emailext(
+                subject: "${env.JOB_NAME} [Build #${env.BUILD_NUMBER}] Failed!",
+                body: """<p>${env.JOB_NAME} [Build #${env.BUILD_NUMBER}] Failed!</p>
+                <p>Check console output at &QUOT;<a href="${env.BUILD_URL}>${env.JOB_NAME} [Build #${env.BUILD_NUMBER}]</a>&QUOT;</p>""",
+                to: "agoldin@learnvest.com"
+            )
         }
     }
 }
